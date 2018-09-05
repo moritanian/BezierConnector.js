@@ -1,14 +1,15 @@
 function Bezier(){
 
-	this.init = function($container){
+	this.init = function($container, width = 800, height = 800){
 
-		//this.$svg = document.createElement("svg");
 		this.$svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 
-		this.$svg.setAttribute( 'width', 800);
-		this.$svg.setAttribute( 'height', 800);
+		this.$svg.setAttribute( 'width', width);
+		this.$svg.setAttribute( 'height', height);
 
 		$container.appendChild( this.$svg );
+
+		this.containerReact = $container.getBoundingClientRect();
 
 		this._curveList = [];
 
@@ -45,8 +46,8 @@ function Bezier(){
 		var fromRect = $from.getBoundingClientRect();
 
 		return {
-			x: fromRect.left + fromRect.width,
-			y: fromRect.top + fromRect.height / 2.0 
+			x: fromRect.left + fromRect.width - this.containerReact.left,
+			y: fromRect.top + fromRect.height / 2.0 - this.containerReact.top 
 		};
 
 	};
@@ -56,8 +57,8 @@ function Bezier(){
 		var toRect = $to.getBoundingClientRect();
 
 		return {
-			x: toRect.left + 0,
-			y: toRect.top + toRect.height / 2.0 
+			x: toRect.left - this.containerReact.left,
+			y: toRect.top + toRect.height / 2.0  - this.containerReact.top 
 		};
 		
 	};
@@ -140,8 +141,8 @@ function Bezier(){
 		let getPosition = downEvent => drag$.pipe( 
 			rxjs.operators.map( moveEvent => {
 				return {
-					'left': moveEvent.clientX - downEvent.offsetX,
-					'top': moveEvent.clientY - downEvent.offsetY
+					'left': moveEvent.clientX - downEvent.offsetX - this.containerReact.left,
+					'top': moveEvent.clientY - downEvent.offsetY - this.containerReact.top
 				};
 			})
 		);
